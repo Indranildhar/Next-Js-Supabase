@@ -5,12 +5,46 @@ import { LoginSchema } from '@/utils/schema/schema';
 import { FaEye, FaEyeSlash, FaLongArrowAltRight } from 'react-icons/fa';
 import Link from 'next/link';
 import { SiSupabase } from "react-icons/si";
+// import { revalidatePath } from 'next/cache';
+import { login } from './actions';
+// import { useFormState } from 'react-dom';
+import { ImSpinner8 } from "react-icons/im";
+
 function page() {
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
+    // const [state, formAction] = useFormState(login, {})
 
-    const handleSubmit = () => {
+    
+    const handleSubmit = async (values) => {
+        setIsLoading(true)
+        try {
+            // console.log(values)
+            // await login(values)
+            const myHeaders = new  Headers()
+            myHeaders.append("Content-Type", "application/json")
 
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: JSON.stringify(values)
+            }
+
+            const response =  await fetch("/api/login", requestOptions)
+            if(!response.ok){
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+            const result = await response.json()
+            if(result?.redirectTo){
+                window.location.href = result.redirectTo
+            }
+            
+            console.log(result)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setIsLoading(false)
+        }
     }
   return (
     
@@ -38,7 +72,9 @@ function page() {
                 <Formik
                     initialValues={{ email: "", password: "", rememberMe: false }}
                     validationSchema={LoginSchema}
-                    onSubmit={handleSubmit}
+                    onSubmit={async (valus) => {
+                        handleSubmit(valus)
+                    }}
                 >
                     {({ errors, touched }) => (
                         <Form className="space-y-5">
@@ -104,7 +140,7 @@ function page() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className={`w-full bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex justify-center items-center gap-2 px-6 py-2 ${isLoading ? `cursor-not-allowed` : ""}`}
+                            className={`w-full bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex justify-center items-center gap-2 px-6 py-2 ${isLoading ? `cursor-not-allowed` : "cursor-pointer"}`}
                         >
                             Log in
                             {isLoading ? <ImSpinner8 className="animate-spin mr-1 h-5 w-5" /> : ""}

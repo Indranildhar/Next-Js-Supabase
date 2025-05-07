@@ -6,32 +6,47 @@ import { RegisterSchema } from '@/utils/schema/schema';
 import { FaEye, FaEyeSlash, FaLongArrowAltRight } from 'react-icons/fa';
 import Link from 'next/link';
 import { SiSupabase } from "react-icons/si";
+import { ImSpinner8 } from "react-icons/im";
+
 function page() {
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
 
+    
     const handleSubmit = async (values) => {
-        console.log(values)
-        const myHeaders = new Headers()
-        myHeaders.append("Content-Type", "application/json")
-        const requestOptions = {
-            method: "POST",
-            headers: myHeaders,
-            body: JSON.stringify({password: values.password, email: values.email}),
+        // console.log(values)
+        setIsLoading(true)
+        try {
+            const myHeaders = new Headers()
+            myHeaders.append("Content-Type", "application/json")
+            const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: JSON.stringify({password: values.password, email: values.email}),
+            }
+            const response = await fetch('/api/signup', requestOptions)
+            if(!response.ok){
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const result = await response.json()
+            console.log(result)
+            if(result?.redirectTo){
+                window.location.href = result.redirectTo
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setIsLoading(false)
         }
-        const response = await fetch('/api/user', requestOptions)
-        const result = await response.json()
-        console.log(result)
     }
   return (
     
     <div className='relative min-h-screen flex flex-col justify-center items-center p-4'>
 
-        <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
-            backgroundImage: "url('/image/workspace-login.jpg')",
-            backgroundSize: "cover",
+                backgroundImage: "url('/image/workspace-login.jpg')",
+                backgroundSize: "cover",
             }}
         >
             {/* Overlay to ensure text readability */}
