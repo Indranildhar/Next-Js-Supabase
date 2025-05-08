@@ -7,7 +7,8 @@ export async function POST(req){
 
         console.log(params)
         
-        const { error } = await supabase.auth.signInWithPassword(params)
+        const { data, error } = await supabase.auth.signInWithPassword(params)
+        console.log(JSON.stringify(data))
         revalidatePath('/', 'layout')
 
         let redirectTo = {redirectTo: '/account'}
