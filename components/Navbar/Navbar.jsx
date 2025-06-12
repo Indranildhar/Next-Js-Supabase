@@ -8,7 +8,7 @@ import { PiUserCircleCheckFill } from "react-icons/pi";
 function Navbar() {
   const [isLogin, setIsLogin] = useState(false)
   return (
-    <nav className='bg-white/30 backdrop-blur-md w-full fixed top-0 start-0 z-20 shadow-sm'>
+    <nav className='bg-white/30 backdrop-blur-md w-full sticky top-0 start-0 z-20 shadow-sm'>
       <div className='max-w-screen-xl mx-auto flex items-center justify-between p-4'>
           <ul className='flex items-center justify-start '>
             <li className='flex items-center justify-start gap-2 '>
